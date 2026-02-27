@@ -1,0 +1,170 @@
+<% content_for(:page_title) { "Budget - #{@event.title}" } %>
+
+<div class="space-y-6" data-controller="budget-calculator" data-budget-total="<%= @event.budget_total %>">
+  <div class="flex items-center justify-between">
+    <div>
+      <%= link_to planner_event_path(@event), class: "text-xs text-gray-500 hover:text-gray-300 transition-colors" do %>
+        &larr; <%= @event.title %>
+      <% end %>
+      <h1 class="text-2xl font-bold text-white mt-1">Budget</h1>
+      <p class="text-sm text-gray-500 mt-0.5"><%= @line_items.count %> line items</p>
+    </div>
+    <%= link_to new_planner_event_line_item_path(@event), class: "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-black text-sm font-semibold hover:from-gold-400 hover:to-gold-500 transition-all shadow-lg shadow-gold-500/20" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      Add Item
+    <% end %>
+  </div>
+
+  <!-- Budget Overview Dashboard -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5">
+      <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Budget</p>
+      <p class="text-2xl font-bold text-white mt-2 font-mono"><%= number_to_currency(@event.budget_total) %></p>
+    </div>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5">
+      <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Estimated</p>
+      <p class="text-2xl font-bold text-blue-400 mt-2 font-mono" data-budget-calculator-target="totalEstimated"><%= number_to_currency(@event.budget_estimated) %></p>
+    </div>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5">
+      <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Actual Spent</p>
+      <p class="text-2xl font-bold text-gold-400 mt-2 font-mono" data-budget-calculator-target="totalActual"><%= number_to_currency(@event.budget_spent) %></p>
+    </div>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5">
+      <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Remaining</p>
+      <p class="text-2xl font-bold mt-2 font-mono <%= @event.budget_remaining.to_f >= 0 ? 'text-emerald-400' : 'text-red-400' %>" data-budget-calculator-target="budgetRemaining"><%= number_to_currency(@event.budget_remaining) %></p>
+    </div>
+  </div>
+
+  <!-- Budget Progress Bar -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-5">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-sm text-gray-400">Budget Utilization</span>
+      <span class="text-sm font-medium text-white" data-budget-calculator-target="budgetPercent"><%= @event.budget_percentage %>%</span>
+    </div>
+    <div class="w-full h-3 rounded-full bg-white/5 overflow-hidden">
+      <% bar_color = @event.budget_percentage > 90 ? "linear-gradient(to right, #ef4444, #f87171)" : @event.budget_percentage > 70 ? "linear-gradient(to right, #f59e0b, #fbbf24)" : "linear-gradient(to right, #10b981, #34d399)" %>
+      <div class="h-full rounded-full transition-all duration-700" data-budget-calculator-target="budgetBar"
+           style="width: <%= [@event.budget_percentage, 100].min %>%; background: <%= bar_color %>"></div>
+    </div>
+    <div class="flex items-center justify-between mt-2 text-[11px] text-gray-500">
+      <span><%= number_to_currency(@event.budget_spent) %> spent</span>
+      <span><%= number_to_currency(@event.budget_remaining) %> remaining</span>
+    </div>
+  </div>
+
+  <!-- Category Breakdown -->
+  <% categories = @line_items.group_by(&:category) %>
+  <% if categories.any? %>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-sm font-semibold text-white mb-4">Spending by Category</h3>
+      <div class="space-y-3">
+        <% cat_colors = %w[#f59e0b #3b82f6 #10b981 #a855f7 #ef4444 #ec4899 #06b6d4 #84cc16] %>
+        <% categories.each_with_index do |(category, items), idx| %>
+          <% cat_total = items.sum(&:actual_cost) %>
+          <% cat_estimated = items.sum(&:estimated_cost) %>
+          <% cat_pct = @event.budget_total.to_d > 0 ? (cat_total / @event.budget_total.to_d * 100).round(1) : 0 %>
+          <div class="flex items-center gap-4">
+            <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: <%= cat_colors[idx % cat_colors.size] %>"></div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm text-white capitalize truncate"><%= category %></span>
+                <div class="flex items-center gap-3 text-xs">
+                  <span class="text-gray-500"><%= number_to_currency(cat_estimated) %> est.</span>
+                  <span class="text-white font-medium font-mono"><%= number_to_currency(cat_total) %></span>
+                  <span class="text-gray-500"><%= cat_pct %>%</span>
+                </div>
+              </div>
+              <div class="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-500" style="width: <%= [cat_pct, 100].min %>%; background-color: <%= cat_colors[idx % cat_colors.size] %>"></div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Line Items Table -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+    <% if @line_items.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Description</th>
+              <th class="px-6 py-3.5 text-right text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Estimated</th>
+              <th class="px-6 py-3.5 text-right text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Actual</th>
+              <th class="px-6 py-3.5 text-right text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Variance</th>
+              <th class="px-6 py-3.5 text-center text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Paid</th>
+              <th class="px-6 py-3.5 text-right text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @line_items.each do |item| %>
+              <tr class="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors group"
+                  data-budget-calculator-target="row"
+                  data-estimated="<%= item.estimated_cost %>"
+                  data-actual="<%= item.actual_cost %>">
+                <td class="px-6 py-3.5">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-[11px] font-medium bg-white/[0.04] text-gray-300 capitalize"><%= item.category %></span>
+                </td>
+                <td class="px-6 py-3.5 text-white"><%= item.description %></td>
+                <td class="px-6 py-3.5 text-gray-400 text-right font-mono text-xs"><%= number_to_currency(item.estimated_cost) %></td>
+                <td class="px-6 py-3.5 text-white text-right font-mono text-xs"><%= number_to_currency(item.actual_cost) %></td>
+                <td class="px-6 py-3.5 text-right font-mono text-xs font-medium <%= item.over_budget? ? 'text-red-400' : 'text-emerald-400' %>">
+                  <%= item.variance.positive? ? "+" : "" %><%= number_to_currency(item.variance) %>
+                </td>
+                <td class="px-6 py-3.5 text-center">
+                  <% if item.paid? %>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 ring-1 ring-inset ring-emerald-500/20">
+                      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"/></svg>
+                      Paid
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-400">Unpaid</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-3.5 text-right">
+                  <div class="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <%= link_to edit_planner_event_line_item_path(@event, item), class: "text-xs text-gray-400 hover:text-gold-400 transition-colors" do %>
+                      Edit
+                    <% end %>
+                    <%= link_to planner_event_line_item_path(@event, item), data: { turbo_method: :delete, turbo_confirm: "Delete this item?" }, class: "text-xs text-gray-400 hover:text-red-400 transition-colors" do %>
+                      Delete
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr class="border-t border-white/[0.08] bg-white/[0.02]">
+              <td class="px-6 py-3.5 text-sm font-semibold text-white" colspan="2">Totals</td>
+              <td class="px-6 py-3.5 text-sm font-semibold text-white text-right font-mono"><%= number_to_currency(@line_items.sum(&:estimated_cost)) %></td>
+              <td class="px-6 py-3.5 text-sm font-semibold text-white text-right font-mono"><%= number_to_currency(@line_items.sum(&:actual_cost)) %></td>
+              <% total_variance = @line_items.sum(&:actual_cost) - @line_items.sum(&:estimated_cost) %>
+              <td class="px-6 py-3.5 text-sm font-semibold text-right font-mono" data-budget-calculator-target="totalVariance">
+                <span class="<%= total_variance > 0 ? 'text-red-400' : 'text-emerald-400' %>">
+                  <%= total_variance.positive? ? "+" : "" %><%= number_to_currency(total_variance) %>
+                </span>
+              </td>
+              <td class="px-6 py-3.5" colspan="2"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-16 px-8">
+        <div class="w-14 h-14 rounded-2xl bg-gold-500/10 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
+        </div>
+        <h3 class="text-white font-medium">No budget items yet</h3>
+        <p class="text-gray-500 text-sm mt-1">Start tracking your event budget by adding line items.</p>
+        <%= link_to new_planner_event_line_item_path(@event), class: "inline-flex items-center gap-2 mt-4 text-sm text-gold-400 hover:text-gold-300 transition-colors" do %>
+          Add your first item &rarr;
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

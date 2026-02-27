@@ -1,0 +1,16 @@
+<%# locals: (message:, title: nil, action_text: nil, action_label: nil, action_path: nil, icon_path: nil) %>
+<div class="text-center py-12">
+  <% if local_assigns[:icon_path] %>
+    <svg class="mx-auto w-12 h-12 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="<%= icon_path %>"/>
+    </svg>
+  <% end %>
+  <% if title %>
+    <h3 class="text-white font-medium mb-1"><%= title %></h3>
+  <% end %>
+  <p class="text-gray-500"><%= message %></p>
+  <% btn_text = action_text || action_label %>
+  <% if btn_text && action_path %>
+    <%= link_to btn_text, action_path, class: "text-gold-400 hover:text-gold-300 text-sm mt-2 inline-block" %>
+  <% end %>
+</div>

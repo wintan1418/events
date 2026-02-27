@@ -1,0 +1,25 @@
+<%# locals: (label:, value:, icon_path: nil, color: "gold", trend: nil) %>
+<div class="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm p-5 group transition-all duration-300" style="--accent: <%= theme_color(color, :bg) %>; --accent-light: <%= theme_color(color, :light) %>; --accent-lighter: <%= theme_color(color, :lighter) %>; --accent-text: <%= theme_color(color, :text) %>;" onmouseenter="this.style.borderColor='<%= theme_color(color, :bg) %>33'" onmouseleave="this.style.borderColor=''">
+  <div class="absolute top-0 right-0 w-24 h-24 rounded-full -translate-y-8 translate-x-8 transition-colors duration-300" style="background-color: var(--accent-lighter)"></div>
+  <div class="relative flex items-start justify-between">
+    <div>
+      <p class="text-xs font-medium text-gray-500 uppercase tracking-wider"><%= label %></p>
+      <p class="text-2xl font-bold text-white mt-2 tracking-tight"><%= value %></p>
+      <% if trend.present? %>
+        <p class="text-xs mt-1.5 flex items-center gap-1 <%= trend.to_s.start_with?('+') ? 'text-emerald-400' : 'text-gray-500' %>">
+          <% if trend.to_s.start_with?('+') %>
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.577 4.878a.75.75 0 01.919-.53l4.78 1.281a.75.75 0 01.531.919l-1.281 4.78a.75.75 0 01-1.449-.387l.81-3.022a19.407 19.407 0 00-5.594 5.203.75.75 0 01-1.139.093L7.55 9.82l-4.22 4.22a.75.75 0 01-1.06-1.06l4.75-4.75a.75.75 0 011.06 0l2.873 2.872a21.075 21.075 0 015.18-4.867l-2.607.7a.75.75 0 01-.387-1.45z" clip-rule="evenodd"/></svg>
+          <% end %>
+          <%= trend %>
+        </p>
+      <% end %>
+    </div>
+    <% if local_assigns[:icon_path] %>
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300" style="background-color: var(--accent-light)">
+        <svg class="w-5 h-5" style="color: var(--accent-text)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="<%= icon_path %>"/>
+        </svg>
+      </div>
+    <% end %>
+  </div>
+</div>

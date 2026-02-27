@@ -1,0 +1,64 @@
+<% content_for(:page_title) { "My Events" } %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-white">My Events</h1>
+  </div>
+
+  <% if @events.any? %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @events.each do |event| %>
+        <%= link_to client_event_path(event), class: "glass-card hover:gold-glow transition-all duration-300 block group" do %>
+          <div class="space-y-4">
+            <!-- Title & Venue -->
+            <div>
+              <h3 class="text-lg font-semibold text-white group-hover:text-gold-400 transition-colors"><%= event.title %></h3>
+              <p class="text-sm text-gray-400 mt-0.5"><%= event.venue || "Venue TBD" %></p>
+            </div>
+
+            <!-- Date & Status -->
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-400">
+                <% if event.event_date %>
+                  <%= event.event_date.strftime("%b %d, %Y") %>
+                <% else %>
+                  Date TBD
+                <% end %>
+              </span>
+              <%= render "components/badge", status: event.status %>
+            </div>
+
+            <!-- Budget Progress -->
+            <div>
+              <%= render "components/progress_bar", percentage: event.budget_percentage, label: "Budget" %>
+            </div>
+
+            <!-- Guest Count & Tasks -->
+            <div class="flex items-center justify-between pt-2 border-t border-white/5">
+              <div class="flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                </svg>
+                <span class="text-sm text-gray-400"><%= event.guests.count %> guests</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span class="text-sm text-gray-400"><%= event.tasks_completion_percentage %>% tasks</span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 text-center py-16">
+      <svg class="w-12 h-12 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+      </svg>
+      <h2 class="text-lg font-semibold text-gray-400">No events yet</h2>
+      <p class="text-gray-500 mt-2">Your planner will assign you to an event soon.</p>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <%= render "layouts/shared/head" %>
+</head>
+<body class="min-h-screen flex" style="background: linear-gradient(135deg, #080d18 0%, #0d1320 40%, #111827 100%)">
+  <%= render "layouts/shared/flash" %>
+
+  <!-- Left panel - Branding -->
+  <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1200&q=80" alt="" class="w-full h-full object-cover opacity-40">
+      <div class="absolute inset-0 bg-gradient-to-r from-surface-950/90 via-surface-950/70 to-surface-950"></div>
+    </div>
+    <div class="relative flex flex-col justify-between p-12 z-10">
+      <div>
+        <h1 class="text-2xl font-bold gold-text tracking-wide">LUXE EVENTS</h1>
+      </div>
+      <div>
+        <h2 class="text-4xl font-bold text-white leading-tight">Plan extraordinary<br>events with<br><span class="gold-text">confidence.</span></h2>
+        <p class="text-gray-400 mt-4 max-w-md text-lg">The all-in-one command center for event planners, clients, and vendors.</p>
+        <div class="flex items-center gap-6 mt-8 pt-8 border-t border-white/[0.06]">
+          <div>
+            <p class="text-2xl font-bold text-white">500+</p>
+            <p class="text-xs text-gray-500">Events Planned</p>
+          </div>
+          <div class="w-px h-10 bg-white/[0.06]"></div>
+          <div>
+            <p class="text-2xl font-bold text-white">98%</p>
+            <p class="text-xs text-gray-500">Client Satisfaction</p>
+          </div>
+          <div class="w-px h-10 bg-white/[0.06]"></div>
+          <div>
+            <p class="text-2xl font-bold text-white">50+</p>
+            <p class="text-xs text-gray-500">Vendor Partners</p>
+          </div>
+        </div>
+      </div>
+      <p class="text-xs text-gray-600">&copy; <%= Date.current.year %> Luxe Events. All rights reserved.</p>
+    </div>
+  </div>
+
+  <!-- Right panel - Form -->
+  <div class="flex-1 flex items-center justify-center p-6 lg:p-12">
+    <div class="w-full max-w-md">
+      <%= yield %>
+    </div>
+  </div>
+</body>
+</html>

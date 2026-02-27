@@ -1,0 +1,59 @@
+<%= form_with(model: @account, url: admin_account_path, method: :patch, class: "space-y-6") do |f| %>
+  <% if @account.errors.any? %>
+    <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+      <h3 class="text-sm font-medium text-red-400"><%= pluralize(@account.errors.count, "error") %> prevented saving:</h3>
+      <ul class="mt-2 text-sm text-red-300 list-disc list-inside">
+        <% @account.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 space-y-5">
+    <div>
+      <%= f.label :name, "Account Name", class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.text_field :name, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "Account name" %>
+    </div>
+
+    <div>
+      <%= f.label :subdomain, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.text_field :subdomain, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white/60 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "yourcompany" %>
+      <p class="text-xs text-gray-500 mt-1">Changing the subdomain will affect your account URL.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div>
+        <%= f.label :email, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.email_field :email, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "email@example.com" %>
+      </div>
+      <div>
+        <%= f.label :phone, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.phone_field :phone, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "Phone number" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :website, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.url_field :website, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "https://example.com" %>
+    </div>
+
+    <div>
+      <%= f.label :address, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.text_area :address, rows: 2, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "Full address" %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-300 mb-1.5">Plan Type</label>
+      <div class="px-4 py-2.5 rounded-lg bg-white/5 border border-white/10">
+        <span class="text-white capitalize"><%= @account.plan_type.humanize %></span>
+        <span class="text-xs text-gray-500 ml-2">(contact support to change your plan)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <%= f.submit "Update Account", class: "px-6 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-black font-semibold hover:from-gold-400 hover:to-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:ring-offset-2 focus:ring-offset-surface-950 transition-all cursor-pointer text-sm" %>
+    <%= link_to "Cancel", admin_account_path, class: "px-6 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-gray-300 hover:text-white hover:border-white/[0.12] transition-all text-sm" %>
+  </div>
+<% end %>

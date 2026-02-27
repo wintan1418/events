@@ -1,0 +1,33 @@
+<%# locals: (status:) %>
+<%
+  colors = {
+    "draft"       => "bg-gray-500/10 text-gray-400 ring-gray-500/20",
+    "planning"    => "bg-blue-500/10 text-blue-400 ring-blue-500/20",
+    "confirmed"   => "bg-gold-500/10 text-gold-400 ring-gold-500/20",
+    "in_progress" => "bg-emerald-500/10 text-emerald-400 ring-emerald-500/20",
+    "completed"   => "bg-emerald-500/10 text-emerald-300 ring-emerald-500/20",
+    "cancelled"   => "bg-red-500/10 text-red-400 ring-red-500/20",
+    "pending"     => "bg-amber-500/10 text-amber-400 ring-amber-500/20",
+    "contracted"  => "bg-blue-500/10 text-blue-400 ring-blue-500/20",
+    "declined"    => "bg-red-500/10 text-red-400 ring-red-500/20",
+    "tentative"   => "bg-purple-500/10 text-purple-400 ring-purple-500/20",
+    "low"         => "bg-gray-500/10 text-gray-400 ring-gray-500/20",
+    "medium"      => "bg-blue-500/10 text-blue-400 ring-blue-500/20",
+    "high"        => "bg-amber-500/10 text-amber-400 ring-amber-500/20",
+    "urgent"      => "bg-red-500/10 text-red-400 ring-red-500/20",
+    "admin"       => "bg-gold-500/10 text-gold-400 ring-gold-500/20",
+    "planner"     => "bg-emerald-500/10 text-emerald-400 ring-emerald-500/20",
+    "client"      => "bg-blue-500/10 text-blue-400 ring-blue-500/20",
+    "vendor"      => "bg-purple-500/10 text-purple-400 ring-purple-500/20",
+    "wedding"     => "bg-pink-500/10 text-pink-400 ring-pink-500/20",
+    "corporate"   => "bg-blue-500/10 text-blue-400 ring-blue-500/20",
+    "social"      => "bg-purple-500/10 text-purple-400 ring-purple-500/20",
+    "gala"        => "bg-gold-500/10 text-gold-400 ring-gold-500/20",
+    "conference"  => "bg-cyan-500/10 text-cyan-400 ring-cyan-500/20",
+    "other"       => "bg-gray-500/10 text-gray-400 ring-gray-500/20",
+  }
+  color_classes = colors[status.to_s] || colors["draft"]
+%>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ring-1 ring-inset <%= color_classes %>">
+  <%= status.to_s.humanize %>
+</span>

@@ -1,0 +1,85 @@
+<div class="text-center mb-8">
+  <h1 class="text-3xl font-bold gold-text tracking-wide">LUXE EVENTS</h1>
+  <p class="text-gray-400 mt-2">Edit your profile</p>
+</div>
+
+<div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "space-y-5" }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :first_name, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.text_field :first_name, autofocus: true, autocomplete: "given-name", placeholder: "First name",
+            class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition-all" %>
+      </div>
+
+      <div>
+        <%= f.label :last_name, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.text_field :last_name, autocomplete: "family-name", placeholder: "Last name",
+            class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition-all" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :email, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.email_field :email, autocomplete: "email", placeholder: "you@example.com",
+          class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition-all" %>
+      <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+        <p class="text-xs text-amber-400 mt-1">Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
+      <% end %>
+    </div>
+
+    <div>
+      <%= f.label :phone, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.telephone_field :phone, autocomplete: "tel", placeholder: "+1 (555) 000-0000",
+          class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition-all" %>
+    </div>
+
+    <div class="border-t border-white/10 pt-5">
+      <h3 class="text-sm font-medium text-gray-300 mb-4">Change password</h3>
+
+      <div class="space-y-4">
+        <div>
+          <%= f.label :password, "New password", class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+          <p class="text-xs text-gray-500 mb-1">Leave blank if you don't want to change it</p>
+          <%= f.password_field :password, autocomplete: "new-password", placeholder: "New password",
+              class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition-all" %>
+          <% if @minimum_password_length %>
+            <p class="text-xs text-gray-500 mt-1"><%= @minimum_password_length %> characters minimum</p>
+          <% end %>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, "Confirm new password", class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "Confirm new password",
+              class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition-all" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 pt-5">
+      <div>
+        <%= f.label :current_password, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <p class="text-xs text-gray-500 mb-1">We need your current password to confirm changes</p>
+        <%= f.password_field :current_password, autocomplete: "current-password", placeholder: "Current password",
+            class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition-all" %>
+      </div>
+    </div>
+
+    <%= f.submit "Update Profile", class: "w-full py-2.5 px-4 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white font-medium hover:from-gold-400 hover:to-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 transition-all duration-200 cursor-pointer" %>
+  <% end %>
+
+  <div class="mt-6 border-t border-white/10 pt-5">
+    <h3 class="text-sm font-medium text-red-400 mb-3">Danger zone</h3>
+    <p class="text-xs text-gray-500 mb-3">Once you delete your account, there is no going back.</p>
+    <%= button_to "Delete my account", registration_path(resource_name),
+        method: :delete,
+        data: { confirm: "Are you sure? This action cannot be undone.", turbo_confirm: "Are you sure? This action cannot be undone." },
+        class: "w-full py-2.5 px-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-medium hover:bg-red-500/20 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all duration-200 cursor-pointer" %>
+  </div>
+
+  <div class="mt-4 text-center">
+    <%= link_to "Back", :back, class: "text-gold-400 hover:text-gold-300 text-sm transition-colors" %>
+  </div>
+</div>

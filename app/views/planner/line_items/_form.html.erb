@@ -1,0 +1,86 @@
+<%= form_with(model: [:planner, @event, line_item], class: "space-y-6", data: { controller: "budget-calculator" }) do |f| %>
+  <% if line_item.errors.any? %>
+    <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+      <h3 class="text-sm font-medium text-red-400"><%= pluralize(line_item.errors.count, "error") %> prevented saving:</h3>
+      <ul class="mt-2 text-sm text-red-300 list-disc list-inside">
+        <% line_item.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 space-y-5">
+    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Item Details</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div>
+        <%= f.label :category, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.text_field :category, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "e.g. Catering, Decor, Venue" %>
+      </div>
+      <div>
+        <%= f.label :event_vendor_id, "Vendor", class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.collection_select :event_vendor_id, @event.event_vendors.includes(:vendor), :id, ->(ev) { ev.vendor.name }, { include_blank: "None" }, class: "w-full rounded-xl bg-[#111827] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :description, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.text_field :description, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "Line item description" %>
+    </div>
+  </div>
+
+  <!-- Cost Calculator Section -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 space-y-5">
+    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Cost Calculator</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div>
+        <%= f.label :estimated_cost, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
+          <%= f.number_field :estimated_cost, step: 0.01, min: 0,
+              class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] pl-8 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all font-mono",
+              placeholder: "0.00",
+              data: { budget_calculator_target: "estimatedInput", action: "input->budget-calculator#calculate" } %>
+        </div>
+      </div>
+      <div>
+        <%= f.label :actual_cost, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
+          <%= f.number_field :actual_cost, step: 0.01, min: 0,
+              class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] pl-8 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all font-mono",
+              placeholder: "0.00",
+              data: { budget_calculator_target: "actualInput", action: "input->budget-calculator#calculate" } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Variance Display -->
+    <div class="hidden rounded-xl bg-white/[0.03] border border-white/[0.06] p-4" data-budget-calculator-target="varianceDisplay">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+          <span class="text-sm text-gray-400">Variance</span>
+        </div>
+        <span class="text-lg font-bold font-mono text-gray-400" data-budget-calculator-target="varianceAmount">$0.00</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <%= f.check_box :paid, class: "rounded bg-white/5 border-white/10 text-gold-500 focus:ring-gold-500/50" %>
+      <%= f.label :paid, "Mark as paid", class: "text-sm text-gray-300" %>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Notes</h3>
+    <%= f.text_area :notes, rows: 3, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "Additional notes about this line item..." %>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <%= f.submit class: "px-6 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-black font-semibold hover:from-gold-400 hover:to-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:ring-offset-2 focus:ring-offset-surface-950 transition-all cursor-pointer text-sm" %>
+    <%= link_to "Cancel", planner_event_line_items_path(@event), class: "px-6 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-gray-300 hover:text-white hover:border-white/[0.12] transition-all text-sm" %>
+  </div>
+<% end %>

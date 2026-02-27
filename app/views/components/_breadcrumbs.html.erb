@@ -1,0 +1,15 @@
+<%# locals: (items:) %>
+<nav class="flex items-center space-x-2 text-sm mb-6">
+  <% items.each_with_index do |(label, path), index| %>
+    <% if index > 0 %>
+      <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+    <% end %>
+    <% if path && index < items.size - 1 %>
+      <%= link_to label, path, class: "text-gray-400 hover:text-gold-400 transition-colors" %>
+    <% else %>
+      <span class="text-gray-300 font-medium"><%= label %></span>
+    <% end %>
+  <% end %>
+</nav>

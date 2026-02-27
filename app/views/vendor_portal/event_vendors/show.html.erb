@@ -1,0 +1,174 @@
+<% content_for(:page_title) { "Contract Details - #{@event.title}" } %>
+
+<div class="space-y-8">
+  <!-- Header -->
+  <div class="flex items-start justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Contract Details</h1>
+      <p class="text-gray-400 mt-1"><%= @event.title %> &middot; <%= @event_vendor.vendor.category.humanize %></p>
+    </div>
+    <div class="flex items-center gap-3">
+      <%= link_to "Back to Event", vendor_portal_event_path(@event), class: "text-sm text-gray-400 hover:text-white transition-colors" %>
+      <%= render "components/badge", status: @event_vendor.status %>
+    </div>
+  </div>
+
+  <!-- Financial Summary -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <%= render "components/stat_card", label: "Contracted Amount", value: number_to_currency(@event_vendor.contracted_amount),
+        icon_path: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" %>
+    <%= render "components/stat_card", label: "Amount Paid", value: number_to_currency(@event_vendor.paid_amount),
+        icon_path: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "emerald" %>
+    <%= render "components/stat_card", label: "Balance Due", value: number_to_currency(@event_vendor.balance_due),
+        icon_path: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z", color: "amber" %>
+    <%= render "components/stat_card", label: "Payment", value: "#{@event_vendor.payment_percentage}%",
+        icon_path: "M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z", color: "blue" %>
+  </div>
+
+  <!-- Payment Progress -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+    <h3 class="text-sm font-semibold text-white mb-3">Payment Progress</h3>
+    <%= render "components/progress_bar", percentage: @event_vendor.payment_percentage, label: "#{number_to_currency(@event_vendor.paid_amount)} of #{number_to_currency(@event_vendor.contracted_amount)}", color: "emerald" %>
+  </div>
+
+  <!-- Contract Details -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Event Information -->
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Event Information</h3>
+      <dl class="space-y-3">
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Event Name</dt>
+          <dd class="text-sm text-white">
+            <%= link_to @event.title, vendor_portal_event_path(@event), class: "hover:text-gold-400 transition-colors" %>
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Event Date</dt>
+          <dd class="text-sm text-white"><%= @event.event_date&.strftime("%B %d, %Y") || "TBD" %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Event Time</dt>
+          <dd class="text-sm text-white">
+            <% if @event.start_time %>
+              <%= @event.start_time.strftime("%l:%M %p").strip %>
+              <% if @event.end_time %>
+                &ndash; <%= @event.end_time.strftime("%l:%M %p").strip %>
+              <% end %>
+            <% else %>
+              TBD
+            <% end %>
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Venue</dt>
+          <dd class="text-sm text-white"><%= @event.venue || "TBD" %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Event Status</dt>
+          <dd><%= render "components/badge", status: @event.status %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Contract Information -->
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Contract Information</h3>
+      <dl class="space-y-3">
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Contracted Amount</dt>
+          <dd class="text-sm font-medium text-white"><%= number_to_currency(@event_vendor.contracted_amount) %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Amount Paid</dt>
+          <dd class="text-sm font-medium text-emerald-400"><%= number_to_currency(@event_vendor.paid_amount) %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Balance Due</dt>
+          <dd class="text-sm font-medium <%= @event_vendor.balance_due.positive? ? 'text-amber-400' : 'text-emerald-400' %>">
+            <%= number_to_currency(@event_vendor.balance_due) %>
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Payment Percentage</dt>
+          <dd class="text-sm font-medium text-white"><%= @event_vendor.payment_percentage %>%</dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Contract Status</dt>
+          <dd><%= render "components/badge", status: @event_vendor.status %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Service Date</dt>
+          <dd class="text-sm text-white"><%= @event_vendor.service_date&.strftime("%B %d, %Y") || "TBD" %></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+    <h3 class="text-lg font-semibold text-white mb-4">Notes</h3>
+    <% if @event_vendor.notes.present? %>
+      <div class="text-sm text-gray-300 leading-relaxed">
+        <%= simple_format(@event_vendor.notes) %>
+      </div>
+    <% else %>
+      <p class="text-sm text-gray-500">No notes have been added to this contract.</p>
+    <% end %>
+  </div>
+
+  <!-- Related Line Items -->
+  <% if @event_vendor.line_items.any? %>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Related Budget Items</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Description</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Estimated</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Actual</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-center">Paid</th>
+            </tr>
+          </thead>
+          <tbody class="">
+            <% @event_vendor.line_items.each do |item| %>
+              <tr class="hover:bg-white/[0.02] transition-colors">
+                <td class="px-6 py-3.5 text-white"><%= item.description %></td>
+                <td class="px-6 py-3.5 text-gray-400 text-right"><%= number_to_currency(item.estimated_cost) %></td>
+                <td class="px-6 py-3.5 text-gray-400 text-right"><%= number_to_currency(item.actual_cost) %></td>
+                <td class="px-6 py-3.5 text-center">
+                  <% if item.paid? %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 ring-1 ring-inset ring-emerald-500/20">Paid</span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 ring-1 ring-inset ring-amber-500/20">Unpaid</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Attached Contracts -->
+  <% if @event_vendor.contracts.any? %>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Contract Documents</h3>
+      <div class="space-y-2">
+        <% @event_vendor.contracts.each do |contract| %>
+          <div class="flex items-center justify-between py-2 px-3 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
+            <div class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-gold-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+              </svg>
+              <span class="text-sm text-white"><%= contract.filename %></span>
+            </div>
+            <%= link_to "Download", rails_blob_path(contract, disposition: "attachment"), class: "text-xs text-gold-400 hover:text-gold-300 transition-colors" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

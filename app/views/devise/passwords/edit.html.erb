@@ -1,0 +1,29 @@
+<div class="lg:hidden text-center mb-8">
+  <h1 class="text-2xl font-bold gold-text tracking-wide">LUXE EVENTS</h1>
+</div>
+
+<div>
+  <h2 class="text-2xl font-bold text-white">Set new password</h2>
+  <p class="text-gray-400 mt-1 text-sm">Choose a strong password for your account</p>
+</div>
+
+<div class="mt-8">
+  <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "space-y-5" }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+    <%= f.hidden_field :reset_password_token %>
+
+    <div>
+      <%= f.label :password, "New password", class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.password_field :password, autofocus: true, autocomplete: "new-password", placeholder: "Min. 6 characters",
+          class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm" %>
+    </div>
+
+    <div>
+      <%= f.label :password_confirmation, "Confirm new password", class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "Re-enter password",
+          class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm" %>
+    </div>
+
+    <%= f.submit "Update Password", class: "w-full py-3 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-black font-semibold hover:from-gold-400 hover:to-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:ring-offset-2 focus:ring-offset-surface-950 transition-all duration-200 cursor-pointer text-sm" %>
+  <% end %>
+</div>

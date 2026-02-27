@@ -1,0 +1,48 @@
+<div class="flex flex-col h-full glass-sidebar">
+  <!-- Brand -->
+  <div class="p-6 pb-4">
+    <h1 class="text-xl font-bold gold-text tracking-wide">LUXE EVENTS</h1>
+    <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1.5">Planner Portal</p>
+  </div>
+
+  <!-- Account -->
+  <div class="px-4 pb-4">
+    <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-black text-sm font-bold flex-shrink-0">
+        <%= current_user.initials %>
+      </div>
+      <div class="min-w-0">
+        <p class="text-sm font-medium text-white truncate"><%= current_user.full_name %></p>
+        <p class="text-[11px] text-gray-500 truncate"><%= current_user.account.name %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 px-3 space-y-0.5">
+    <p class="px-4 pt-2 pb-2 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">Main</p>
+
+    <%= link_to planner_dashboard_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all duration-200 group #{current_page?(planner_dashboard_path) ? 'bg-gradient-to-r from-gold-500/15 to-gold-500/5 text-gold-400 shadow-sm shadow-gold-500/10' : 'text-gray-400 hover:bg-white/[0.04] hover:text-white'}" do %>
+      <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+      <span>Dashboard</span>
+    <% end %>
+
+    <%= link_to planner_events_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all duration-200 group #{request.path.start_with?('/planner/events') ? 'bg-gradient-to-r from-gold-500/15 to-gold-500/5 text-gold-400 shadow-sm shadow-gold-500/10' : 'text-gray-400 hover:bg-white/[0.04] hover:text-white'}" do %>
+      <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+      <span>Events</span>
+    <% end %>
+
+    <%= link_to planner_vendors_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all duration-200 group #{request.path.start_with?('/planner/vendors') ? 'bg-gradient-to-r from-gold-500/15 to-gold-500/5 text-gold-400 shadow-sm shadow-gold-500/10' : 'text-gray-400 hover:bg-white/[0.04] hover:text-white'}" do %>
+      <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"/></svg>
+      <span>Vendors</span>
+    <% end %>
+  </nav>
+
+  <!-- Bottom -->
+  <div class="p-4 border-t border-white/[0.06]">
+    <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-500 hover:text-red-400 hover:bg-red-500/5 transition-all" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
+      <span>Sign Out</span>
+    <% end %>
+  </div>
+</div>

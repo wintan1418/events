@@ -1,0 +1,102 @@
+<% content_for(:page_title) { "My Events" } %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-white">My Events</h1>
+      <p class="text-sm text-gray-500 mt-1"><%= @events.count %> event<%= @events.count == 1 ? '' : 's' %></p>
+    </div>
+    <%= link_to new_planner_event_path, class: "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-black text-sm font-semibold hover:from-gold-400 hover:to-gold-500 transition-all shadow-lg shadow-gold-500/20" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      New Event
+    <% end %>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex flex-wrap items-center gap-3">
+    <%= form_with url: planner_events_path, method: :get, class: "flex flex-wrap items-center gap-3 flex-1", data: { controller: "auto-submit" } do |f| %>
+      <div class="relative flex-1 min-w-[200px] max-w-sm">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+        <%= f.search_field :q, value: params[:q], placeholder: "Search events...", class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", data: { action: "input->auto-submit#submit" } %>
+      </div>
+      <%= f.select :status, options_for_select([["All Statuses", ""], ["Draft", "draft"], ["Planning", "planning"], ["Confirmed", "confirmed"], ["In Progress", "in_progress"], ["Completed", "completed"], ["Cancelled", "cancelled"]], params[:status]), {}, class: "rounded-xl bg-[#111827] border border-white/[0.08] px-4 py-2.5 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", data: { action: "change->auto-submit#submit" } %>
+      <%= f.select :show, options_for_select([["Upcoming", ""], ["Past", "past"]], params[:show]), {}, class: "rounded-xl bg-[#111827] border border-white/[0.08] px-4 py-2.5 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", data: { action: "change->auto-submit#submit" } %>
+    <% end %>
+  </div>
+
+  <% if @events.any? %>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Event</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Client</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Budget</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Progress</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @events.each do |event| %>
+              <tr class="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors group">
+                <td class="px-6 py-4">
+                  <%= link_to planner_event_path(event), class: "block" do %>
+                    <p class="font-medium text-white group-hover:text-gold-400 transition-colors"><%= event.title %></p>
+                    <p class="text-[11px] text-gray-500 mt-0.5"><%= event.event_type.humanize %> &middot; <%= event.venue || "Venue TBD" %></p>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4">
+                  <% if event.client %>
+                    <div class="flex items-center gap-2">
+                      <div class="w-6 h-6 rounded-md bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-[10px] font-bold">
+                        <%= event.client.initials %>
+                      </div>
+                      <span class="text-gray-300 text-xs"><%= event.client.full_name %></span>
+                    </div>
+                  <% else %>
+                    <span class="text-gray-600 text-xs">No client</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4">
+                  <p class="text-gray-300 text-xs"><%= event.event_date&.strftime("%b %d, %Y") || "TBD" %></p>
+                  <% if event.days_until && event.days_until > 0 %>
+                    <p class="text-[10px] text-gold-400/60 mt-0.5"><%= event.days_until %> days</p>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 text-gray-300 text-xs"><%= number_to_currency(event.budget_total) %></td>
+                <td class="px-6 py-4"><%= render "components/badge", status: event.status %></td>
+                <td class="px-6 py-4 w-32">
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                      <div class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400" style="width: <%= event.tasks_completion_percentage %>%"></div>
+                    </div>
+                    <span class="text-[10px] text-gray-500 w-8 text-right"><%= event.tasks_completion_percentage %>%</span>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <%= render "components/pagination", pagy: @pagy %>
+  <% else %>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm">
+      <div class="text-center py-20 px-8">
+        <div class="w-16 h-16 rounded-2xl bg-gold-500/10 flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-white">No events yet</h3>
+        <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">Create your first event to start planning something extraordinary.</p>
+        <%= link_to new_planner_event_path, class: "inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-black text-sm font-semibold hover:from-gold-400 hover:to-gold-500 transition-all" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          Create Your First Event
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

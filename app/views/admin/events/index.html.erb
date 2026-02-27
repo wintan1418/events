@@ -1,0 +1,53 @@
+<% content_for(:page_title) { "All Events" } %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-white">All Events</h1>
+  </div>
+
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+    <% if @events.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Event</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Planner</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Client</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Budget</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Tasks</th>
+            </tr>
+          </thead>
+          <tbody class="">
+            <% @events.each do |event| %>
+              <tr class="hover:bg-white/[0.02] transition-colors">
+                <td class="px-6 py-3.5">
+                  <%= link_to admin_event_path(event), class: "font-medium text-white hover:text-gold-400" do %>
+                    <%= event.title %>
+                  <% end %>
+                  <p class="text-xs text-gray-500"><%= event.venue %></p>
+                </td>
+                <td class="px-6 py-3.5 text-gray-400"><%= event.planner&.full_name || "—" %></td>
+                <td class="px-6 py-3.5 text-gray-400"><%= event.client&.full_name || "—" %></td>
+                <td class="px-6 py-3.5 text-gray-400"><%= event.event_date&.strftime("%b %d, %Y") || "TBD" %></td>
+                <td class="px-6 py-3.5 text-gray-400 text-right"><%= number_to_currency(event.budget_total) %></td>
+                <td class="px-6 py-3.5"><%= render "components/badge", status: event.status %></td>
+                <td class="px-6 py-3.5 text-right">
+                  <span class="text-sm text-white font-medium"><%= event.tasks_completion_percentage %>%</span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="text-gray-500">No events found</p>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "components/pagination", pagy: @pagy %>
+</div>

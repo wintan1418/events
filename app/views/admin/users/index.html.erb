@@ -1,0 +1,81 @@
+<% content_for(:page_title) { "Users" } %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-white">Users</h1>
+    <%= link_to new_admin_user_path, class: "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-black text-sm font-semibold hover:from-gold-400 hover:to-gold-500 transition-all shadow-lg shadow-gold-500/20" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      New User
+    <% end %>
+  </div>
+
+  <!-- Search & Filter -->
+  <div class="flex flex-wrap items-center gap-3">
+    <%= form_with url: admin_users_path, method: :get, class: "flex flex-wrap items-center gap-3 flex-1", data: { controller: "auto-submit" } do |f| %>
+      <div class="relative flex-1 min-w-[200px] max-w-sm">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+        <%= f.search_field :q, value: params[:q], placeholder: "Search users...", class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", data: { action: "input->auto-submit#submit" } %>
+      </div>
+      <%= f.select :role, options_for_select([["All Roles", ""], ["Admin", "admin"], ["Planner", "planner"], ["Client", "client"], ["Vendor", "vendor"]], params[:role]), {}, class: "rounded-xl bg-[#111827] border border-white/[0.08] px-4 py-2.5 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", data: { action: "change->auto-submit#submit" } %>
+    <% end %>
+  </div>
+
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+    <% if @users.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Name</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Role</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Phone</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Last Sign In</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="">
+            <% @users.each do |user| %>
+              <tr class="hover:bg-white/[0.02] transition-colors">
+                <td class="px-6 py-3.5">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                      <span class="text-xs font-medium text-gray-400"><%= user.initials %></span>
+                    </div>
+                    <%= link_to admin_user_path(user), class: "font-medium text-white hover:text-gold-400" do %>
+                      <%= user.full_name %>
+                    <% end %>
+                  </div>
+                </td>
+                <td class="px-6 py-3.5 text-gray-400"><%= user.email %></td>
+                <td class="px-6 py-3.5"><%= render "components/badge", status: user.role %></td>
+                <td class="px-6 py-3.5 text-gray-400"><%= user.phone || "—" %></td>
+                <td class="px-6 py-3.5">
+                  <% if user.active? %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 ring-1 ring-inset ring-emerald-500/20">Active</span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/10 text-red-400 ring-1 ring-inset ring-red-500/20">Inactive</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-3.5 text-gray-400"><%= user.current_sign_in_at&.strftime("%b %d, %Y") || "Never" %></td>
+                <td class="px-6 py-3.5">
+                  <div class="flex items-center gap-2">
+                    <%= link_to "View", admin_user_path(user), class: "text-xs text-gold-400 hover:text-gold-300" %>
+                    <%= link_to "Edit", edit_admin_user_path(user), class: "text-xs text-gold-400 hover:text-gold-300" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="text-gray-500">No users found</p>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "components/pagination", pagy: @pagy %>
+</div>

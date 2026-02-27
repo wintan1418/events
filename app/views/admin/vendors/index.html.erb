@@ -1,0 +1,65 @@
+<% content_for(:page_title) { "Vendors" } %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-white">Vendors</h1>
+    <%= link_to new_admin_vendor_path, class: "px-4 py-2 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white text-sm font-medium hover:from-gold-400 hover:to-gold-500 transition-all" do %>
+      + New Vendor
+    <% end %>
+  </div>
+
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+    <% if @vendors.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Name</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Phone</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Events</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="">
+            <% @vendors.each do |vendor| %>
+              <tr class="hover:bg-white/[0.02] transition-colors">
+                <td class="px-6 py-3.5">
+                  <%= link_to admin_vendor_path(vendor), class: "font-medium text-white hover:text-gold-400" do %>
+                    <%= vendor.name %>
+                  <% end %>
+                </td>
+                <td class="px-6 py-3.5 text-gray-400 capitalize"><%= vendor.category.humanize %></td>
+                <td class="px-6 py-3.5 text-gray-400"><%= vendor.email || "—" %></td>
+                <td class="px-6 py-3.5 text-gray-400"><%= vendor.phone || "—" %></td>
+                <td class="px-6 py-3.5">
+                  <% if vendor.active? %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 ring-1 ring-inset ring-emerald-500/20">Active</span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/10 text-red-400 ring-1 ring-inset ring-red-500/20">Inactive</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-3.5 text-gray-400"><%= vendor.event_vendors.count %></td>
+                <td class="px-6 py-3.5">
+                  <div class="flex items-center gap-2">
+                    <%= link_to "View", admin_vendor_path(vendor), class: "text-xs text-gold-400 hover:text-gold-300" %>
+                    <%= link_to "Edit", edit_admin_vendor_path(vendor), class: "text-xs text-gold-400 hover:text-gold-300" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="text-gray-500">No vendors found</p>
+        <%= link_to "Add your first vendor", new_admin_vendor_path, class: "text-gold-400 hover:text-gold-300 text-sm mt-2 inline-block" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "components/pagination", pagy: @pagy %>
+</div>

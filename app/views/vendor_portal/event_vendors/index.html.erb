@@ -1,0 +1,70 @@
+<% content_for(:page_title) { "My Contracts - #{@event.title}" } %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-start justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-white">My Contracts</h1>
+      <p class="text-gray-400 mt-1"><%= @event.title %> &middot; <%= @event.event_date&.strftime("%B %d, %Y") || "Date TBD" %></p>
+    </div>
+    <%= link_to "Back to Event", vendor_portal_event_path(@event), class: "text-sm text-gray-400 hover:text-white transition-colors" %>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <%= render "components/stat_card", label: "Total Contracted", value: number_to_currency(@event_vendors.sum(&:contracted_amount)),
+        icon_path: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" %>
+    <%= render "components/stat_card", label: "Total Paid", value: number_to_currency(@event_vendors.sum(&:paid_amount)),
+        icon_path: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "emerald" %>
+    <%= render "components/stat_card", label: "Balance Due", value: number_to_currency(@event_vendors.sum(&:balance_due)),
+        icon_path: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z", color: "amber" %>
+  </div>
+
+  <!-- Contracts Table -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+    <% if @event_vendors.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Service</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Service Date</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Contracted</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Paid</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Balance</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="">
+            <% @event_vendors.each do |ev| %>
+              <tr class="hover:bg-white/[0.02] transition-colors">
+                <td class="px-6 py-3.5">
+                  <p class="font-medium text-white"><%= ev.vendor.name %></p>
+                  <p class="text-xs text-gray-500 capitalize"><%= ev.vendor.category.humanize %></p>
+                </td>
+                <td class="px-6 py-3.5 text-gray-400"><%= ev.service_date&.strftime("%b %d, %Y") || "TBD" %></td>
+                <td class="px-6 py-3.5 text-gray-400 text-right"><%= number_to_currency(ev.contracted_amount) %></td>
+                <td class="px-6 py-3.5 text-emerald-400 text-right"><%= number_to_currency(ev.paid_amount) %></td>
+                <td class="px-6 py-3.5 text-right font-medium <%= ev.balance_due.positive? ? 'text-amber-400' : 'text-emerald-400' %>">
+                  <%= number_to_currency(ev.balance_due) %>
+                </td>
+                <td class="px-6 py-3.5"><%= render "components/badge", status: ev.status %></td>
+                <td class="px-6 py-3.5">
+                  <%= link_to "View", vendor_portal_event_event_vendor_path(@event, ev), class: "text-xs text-gold-400 hover:text-gold-300 transition-colors" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="w-12 h-12 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+        </svg>
+        <p class="text-gray-500">No contracts found for this event.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

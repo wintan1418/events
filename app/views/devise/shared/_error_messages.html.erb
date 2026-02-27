@@ -1,0 +1,13 @@
+<% if resource.errors.any? %>
+  <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+    <div class="flex items-center gap-2 mb-2">
+      <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+      <h3 class="text-sm font-semibold text-red-400"><%= pluralize(resource.errors.count, "error") %> prevented saving:</h3>
+    </div>
+    <ul class="text-sm text-red-300/80 list-disc list-inside space-y-0.5">
+      <% resource.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

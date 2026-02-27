@@ -1,0 +1,95 @@
+<% content_for(:page_title) { "Budget - #{@event.title}" } %>
+
+<div class="space-y-6">
+  <!-- Header with Breadcrumb -->
+  <div class="flex items-center justify-between">
+    <div>
+      <div class="flex items-center gap-2 mb-2">
+        <%= link_to @event.title, client_event_path(@event), class: "text-sm text-gray-400 hover:text-white transition-colors" %>
+        <span class="text-gray-600">/</span>
+        <span class="text-sm text-gray-400">Budget</span>
+      </div>
+      <h1 class="text-2xl font-bold text-white">Budget Overview</h1>
+    </div>
+  </div>
+
+  <!-- Budget Summary -->
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+    <%= render "components/stat_card", label: "Total Budget", value: number_to_currency(@event.budget_total),
+        icon_path: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" %>
+    <%= render "components/stat_card", label: "Total Spent", value: number_to_currency(@event.budget_spent),
+        icon_path: "M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "emerald" %>
+    <%= render "components/stat_card", label: "Remaining", value: number_to_currency(@event.budget_remaining),
+        icon_path: "M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185zM9.75 9h.008v.008H9.75V9zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm4.125 4.5h.008v.008h-.008V13.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z", color: "blue" %>
+    <%= render "components/stat_card", label: "Spent", value: "#{@event.budget_percentage}%",
+        icon_path: "M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z", color: "purple" %>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+    <%= render "components/progress_bar", percentage: @event.budget_percentage, label: "#{number_to_currency(@event.budget_spent)} of #{number_to_currency(@event.budget_total)}" %>
+  </div>
+
+  <!-- Line Items Table (grouped by category) -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+    <% if @line_items.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Description</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Estimated</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Actual</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody class="">
+            <% current_category = nil %>
+            <% @line_items.each do |item| %>
+              <% if item.category != current_category %>
+                <% current_category = item.category %>
+                <tr class="bg-white/[0.02]">
+                  <td colspan="5" class="px-4 py-2">
+                    <span class="text-xs font-semibold text-gold-400 uppercase tracking-wider"><%= current_category %></span>
+                  </td>
+                </tr>
+              <% end %>
+              <tr class="hover:bg-white/[0.02] transition-colors">
+                <td class="px-6 py-3.5 text-gray-500 text-sm"></td>
+                <td class="px-6 py-3.5 text-white"><%= item.description %></td>
+                <td class="px-6 py-3.5 text-gray-400 text-right"><%= number_to_currency(item.estimated_cost) %></td>
+                <td class="px-6 py-3.5 text-right font-medium <%= item.over_budget? ? 'text-red-400' : 'text-white' %>">
+                  <%= number_to_currency(item.actual_cost) %>
+                </td>
+                <td class="px-6 py-3.5 text-center">
+                  <% if item.paid? %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 ring-1 ring-inset ring-emerald-500/20">Paid</span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 ring-1 ring-inset ring-amber-500/20">Unpaid</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr class="border-t border-white/10">
+              <td class="px-6 py-3.5 text-sm font-semibold text-white" colspan="2">Totals</td>
+              <td class="px-6 py-3.5 text-sm font-semibold text-white text-right"><%= number_to_currency(@line_items.sum(&:estimated_cost)) %></td>
+              <td class="px-6 py-3.5 text-sm font-semibold text-white text-right"><%= number_to_currency(@line_items.sum(&:actual_cost)) %></td>
+              <td class="px-6 py-3.5"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="w-12 h-12 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/>
+        </svg>
+        <p class="text-gray-500">No budget items yet</p>
+        <p class="text-gray-600 text-sm mt-1">Your planner will add budget items as the event is planned.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

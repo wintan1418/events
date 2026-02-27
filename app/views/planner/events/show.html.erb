@@ -1,0 +1,124 @@
+<% content_for(:page_title) { @event.title } %>
+
+<div class="space-y-8">
+  <!-- Event Header -->
+  <div class="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-r from-gold-500/10 via-white/[0.03] to-transparent p-8">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-gold-500/5 rounded-full -translate-y-32 translate-x-32"></div>
+    <div class="relative flex items-start justify-between">
+      <div>
+        <div class="flex items-center gap-3 mb-3">
+          <%= link_to planner_events_path, class: "text-xs text-gray-500 hover:text-gray-300 transition-colors" do %>
+            &larr; All Events
+          <% end %>
+          <%= render "components/badge", status: @event.status %>
+          <%= render "components/badge", status: @event.event_type %>
+        </div>
+        <h1 class="text-3xl font-bold text-white"><%= @event.title %></h1>
+        <div class="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-400">
+          <% if @event.venue %>
+            <div class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+              <span><%= @event.venue %></span>
+            </div>
+          <% end %>
+          <% if @event.event_date %>
+            <div class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+              <span><%= @event.event_date.strftime("%B %d, %Y") %></span>
+              <% if @event.days_until && @event.days_until > 0 %>
+                <span class="text-gold-400/70">&middot; <%= @event.days_until %> days away</span>
+              <% end %>
+            </div>
+          <% end %>
+          <% if @event.client %>
+            <div class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+              <span>Client: <%= @event.client.full_name %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <%= link_to edit_planner_event_path(@event), class: "flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.05] border border-white/[0.08] text-sm text-gray-300 hover:text-white hover:border-gold-500/20 transition-all" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+          Edit
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <%= render "components/stat_card", label: "Days Until", value: @event.days_until&.positive? ? @event.days_until : (@event.days_until == 0 ? "Today!" : "Passed"),
+        icon_path: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" %>
+    <%= render "components/stat_card", label: "Budget Used", value: "#{@event.budget_percentage}%",
+        icon_path: "M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "emerald" %>
+    <%= render "components/stat_card", label: "Total Guests", value: @event.guests.count,
+        icon_path: "M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z", color: "blue" %>
+    <%= render "components/stat_card", label: "Tasks Done", value: "#{@event.tasks_completion_percentage}%",
+        icon_path: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "purple" %>
+  </div>
+
+  <!-- Quick Navigation Cards -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+    <% nav_items = [
+      { path: planner_event_tasks_path(@event), count: @event.tasks.count, label: "Tasks", icon: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "emerald" },
+      { path: planner_event_line_items_path(@event), count: @event.line_items.count, label: "Budget", icon: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z", color: "gold" },
+      { path: planner_event_guests_path(@event), count: @event.guests.count, label: "Guests", icon: "M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z", color: "blue" },
+      { path: planner_event_event_vendors_path(@event), count: @event.event_vendors.count, label: "Vendors", icon: "M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z", color: "purple" },
+      { path: planner_event_timelines_path(@event), count: @event.timelines.count, label: "Timeline", icon: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z", color: "amber" },
+    ] %>
+    <% nav_items.each do |item| %>
+      <%= link_to item[:path], class: "rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-center transition-all duration-300 group", style: "--nav-accent: #{theme_color(item[:color], :bg)}; --nav-accent-light: #{theme_color(item[:color], :light)}; --nav-accent-text: #{theme_color(item[:color], :text)}", onmouseenter: "this.style.borderColor='#{theme_color(item[:color], :bg)}33'; this.style.backgroundColor='#{theme_color(item[:color], :lighter)}'", onmouseleave: "this.style.borderColor=''; this.style.backgroundColor=''" do %>
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2 transition-colors" style="background-color: var(--nav-accent-light)">
+          <svg class="w-4 h-4" style="color: var(--nav-accent-text)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="<%= item[:icon] %>"/></svg>
+        </div>
+        <p class="text-lg font-bold text-white"><%= item[:count] %></p>
+        <p class="text-[11px] text-gray-500"><%= item[:label] %></p>
+      <% end %>
+    <% end %>
+    <div class="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-center">
+      <div class="w-8 h-8 rounded-lg bg-gray-500/10 flex items-center justify-center mx-auto mb-2">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+      </div>
+      <p class="text-lg font-bold text-white"><%= @event.estimated_guests || 0 %></p>
+      <p class="text-[11px] text-gray-500">Est. Guests</p>
+    </div>
+  </div>
+
+  <!-- Budget Progress -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="text-lg font-semibold text-white">Budget Overview</h3>
+        <p class="text-xs text-gray-500 mt-1"><%= number_to_currency(@event.budget_spent) %> of <%= number_to_currency(@event.budget_total) %> spent</p>
+      </div>
+      <%= link_to planner_event_line_items_path(@event), class: "text-sm text-gold-400 hover:text-gold-300 transition-colors" do %>
+        Manage Budget
+      <% end %>
+    </div>
+    <%= render "components/progress_bar", percentage: @event.budget_percentage, color: @event.budget_percentage > 90 ? "red" : @event.budget_percentage > 70 ? "amber" : "emerald" %>
+
+    <div class="mt-6 grid grid-cols-3 gap-4">
+      <div class="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4 text-center">
+        <p class="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Total</p>
+        <p class="text-lg font-bold text-white mt-1"><%= number_to_currency(@event.budget_total) %></p>
+      </div>
+      <div class="rounded-xl bg-gold-500/[0.05] border border-gold-500/10 p-4 text-center">
+        <p class="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Spent</p>
+        <p class="text-lg font-bold text-gold-400 mt-1"><%= number_to_currency(@event.budget_spent) %></p>
+      </div>
+      <div class="rounded-xl bg-emerald-500/[0.05] border border-emerald-500/10 p-4 text-center">
+        <p class="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Remaining</p>
+        <p class="text-lg font-bold text-emerald-400 mt-1"><%= number_to_currency(@event.budget_remaining) %></p>
+      </div>
+    </div>
+  </div>
+
+  <% if @event.description.present? %>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Description</h3>
+      <p class="text-gray-300 text-sm leading-relaxed"><%= simple_format(@event.description) %></p>
+    </div>
+  <% end %>
+</div>

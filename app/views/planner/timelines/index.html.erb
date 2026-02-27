@@ -1,0 +1,89 @@
+<% content_for(:page_title) { "Timeline - #{@event.title}" } %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <%= link_to planner_event_path(@event), class: "text-xs text-gray-500 hover:text-gray-300 transition-colors" do %>
+        &larr; <%= @event.title %>
+      <% end %>
+      <h1 class="text-2xl font-bold text-white mt-1">Day-of Timeline</h1>
+      <p class="text-sm text-gray-500 mt-0.5"><%= @event.event_date&.strftime("%B %d, %Y") %> &middot; <%= @timelines.count %> entries</p>
+    </div>
+    <%= link_to new_planner_event_timeline_path(@event), class: "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-black text-sm font-semibold hover:from-gold-400 hover:to-gold-500 transition-all shadow-lg shadow-gold-500/20" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      Add Entry
+    <% end %>
+  </div>
+
+  <% if @timelines.any? %>
+    <div class="relative">
+      <!-- Vertical line -->
+      <div class="absolute left-[4.5rem] top-0 bottom-0 w-px bg-gradient-to-b from-gold-500/40 via-white/10 to-transparent"></div>
+
+      <div class="space-y-4">
+        <% @timelines.each_with_index do |timeline, i| %>
+          <div class="relative flex gap-5 group">
+            <!-- Time -->
+            <div class="flex-shrink-0 w-16 text-right pt-4">
+              <p class="text-sm font-semibold text-gold-400"><%= timeline.start_time&.strftime("%l:%M")&.strip %></p>
+              <p class="text-[10px] text-gray-600 uppercase"><%= timeline.start_time&.strftime("%p") %></p>
+              <% if timeline.end_time %>
+                <p class="text-[10px] text-gray-600 mt-0.5"><%= timeline.end_time.strftime("%l:%M %p").strip %></p>
+              <% end %>
+            </div>
+
+            <!-- Dot -->
+            <div class="flex-shrink-0 w-4 h-4 mt-4 rounded-full bg-gold-500 ring-4 ring-gold-500/20 relative z-10 group-hover:ring-gold-500/40 transition-all"></div>
+
+            <!-- Card -->
+            <div class="flex-1 rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-5 hover:border-gold-500/20 hover:bg-white/[0.04] transition-all duration-200">
+              <div class="flex items-start justify-between mb-2">
+                <h3 class="font-semibold text-white group-hover:text-gold-400 transition-colors"><%= timeline.title %></h3>
+                <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <%= link_to edit_planner_event_timeline_path(@event, timeline), class: "text-xs text-gray-400 hover:text-gold-400 transition-colors" do %>
+                    Edit
+                  <% end %>
+                  <%= link_to planner_event_timeline_path(@event, timeline), data: { turbo_method: :delete, turbo_confirm: "Delete this entry?" }, class: "text-xs text-gray-400 hover:text-red-400 transition-colors" do %>
+                    Delete
+                  <% end %>
+                </div>
+              </div>
+
+              <% if timeline.description.present? %>
+                <p class="text-sm text-gray-400 mb-3 leading-relaxed"><%= timeline.description %></p>
+              <% end %>
+
+              <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+                <% if timeline.responsible_party.present? %>
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                    <%= timeline.responsible_party %>
+                  </span>
+                <% end %>
+                <% if timeline.location.present? %>
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                    <%= timeline.location %>
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm">
+      <div class="text-center py-16 px-8">
+        <div class="w-14 h-14 rounded-2xl bg-gold-500/10 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="text-white font-medium">No timeline entries yet</h3>
+        <p class="text-gray-500 text-sm mt-1">Map out the day-of schedule for your event.</p>
+        <%= link_to new_planner_event_timeline_path(@event), class: "inline-flex items-center gap-2 mt-4 text-sm text-gold-400 hover:text-gold-300 transition-colors" do %>
+          Add the first entry &rarr;
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

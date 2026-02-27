@@ -1,0 +1,73 @@
+<% content_for(:page_title) { "Vendors - #{@event.title}" } %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Event Vendors</h1>
+      <p class="text-gray-400 mt-1"><%= @event.title %></p>
+    </div>
+    <div class="flex items-center gap-3">
+      <%= link_to "Back", planner_event_path(@event), class: "text-sm text-gray-400 hover:text-white" %>
+      <%= link_to new_planner_event_event_vendor_path(@event), class: "px-4 py-2 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white text-sm font-medium hover:from-gold-400 hover:to-gold-500 transition-all" do %>
+        + Assign Vendor
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <%= render "components/stat_card", label: "Total Contracted", value: number_to_currency(@event_vendors.sum(&:contracted_amount)) %>
+    <%= render "components/stat_card", label: "Total Paid", value: number_to_currency(@event_vendors.sum(&:paid_amount)), color: "emerald" %>
+    <%= render "components/stat_card", label: "Balance Due", value: number_to_currency(@event_vendors.sum(&:balance_due)), color: "amber" %>
+  </div>
+
+  <!-- Vendors Table -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+    <% if @event_vendors.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Vendor</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Contracted</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Paid</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Balance</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="">
+            <% @event_vendors.each do |ev| %>
+              <tr class="hover:bg-white/[0.02] transition-colors">
+                <td class="px-4 py-3">
+                  <%= link_to planner_event_event_vendor_path(@event, ev), class: "font-medium text-white hover:text-gold-400" do %>
+                    <%= ev.vendor.name %>
+                  <% end %>
+                </td>
+                <td class="px-4 py-3 text-gray-400 capitalize"><%= ev.vendor.category.humanize %></td>
+                <td class="px-4 py-3 text-gray-400 text-right"><%= number_to_currency(ev.contracted_amount) %></td>
+                <td class="px-4 py-3 text-emerald-400 text-right"><%= number_to_currency(ev.paid_amount) %></td>
+                <td class="px-4 py-3 text-right font-medium <%= ev.balance_due.positive? ? 'text-amber-400' : 'text-emerald-400' %>">
+                  <%= number_to_currency(ev.balance_due) %>
+                </td>
+                <td class="px-4 py-3"><%= render "components/badge", status: ev.status %></td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <%= link_to "View", planner_event_event_vendor_path(@event, ev), class: "text-xs text-gold-400 hover:text-gold-300" %>
+                    <%= link_to "Edit", edit_planner_event_event_vendor_path(@event, ev), class: "text-xs text-gold-400 hover:text-gold-300" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="text-gray-500">No vendors assigned yet</p>
+        <%= link_to "Assign your first vendor", new_planner_event_event_vendor_path(@event), class: "text-gold-400 hover:text-gold-300 text-sm mt-2 inline-block" %>
+      </div>
+    <% end %>
+  </div>
+</div>

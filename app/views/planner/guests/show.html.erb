@@ -1,0 +1,64 @@
+<% content_for(:page_title) { "#{@guest.full_name} - #{@event.title}" } %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-white"><%= @guest.full_name %></h1>
+      <p class="text-gray-400 mt-1"><%= @event.title %></p>
+    </div>
+    <div class="flex items-center gap-3">
+      <%= link_to "Back", planner_event_guests_path(@event), class: "text-sm text-gray-400 hover:text-white" %>
+      <%= link_to "Edit", edit_planner_event_guest_path(@event, @guest), class: "px-4 py-2 rounded-lg glass text-sm text-gray-300 hover:bg-white/10 transition-all" %>
+      <%= render "components/badge", status: @guest.rsvp_status %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Contact Information -->
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+      <h3 class="text-lg font-semibold text-white mb-4">Contact Information</h3>
+      <dl class="space-y-3">
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Email</dt>
+          <dd class="text-sm text-white"><%= @guest.email || "—" %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Phone</dt>
+          <dd class="text-sm text-white"><%= @guest.phone || "—" %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Party Size</dt>
+          <dd class="text-sm text-white"><%= @guest.party_size %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Table Number</dt>
+          <dd class="text-sm text-white"><%= @guest.table_number || "Not assigned" %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Meal Choice</dt>
+          <dd class="text-sm text-white"><%= @guest.meal_choice || "—" %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Additional Details -->
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+      <h3 class="text-lg font-semibold text-white mb-4">Additional Details</h3>
+      <dl class="space-y-3">
+        <div>
+          <dt class="text-sm text-gray-400 mb-1">Dietary Notes</dt>
+          <dd class="text-sm text-white"><%= @guest.dietary_notes.present? ? @guest.dietary_notes : "None" %></dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-400 mb-1">Notes</dt>
+          <dd class="text-sm text-white"><%= @guest.notes.present? ? @guest.notes : "None" %></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <%= link_to "Edit Guest", edit_planner_event_guest_path(@event, @guest), class: "px-4 py-2 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white text-sm font-medium hover:from-gold-400 hover:to-gold-500 transition-all" %>
+    <%= link_to "Delete Guest", planner_event_guest_path(@event, @guest), data: { turbo_method: :delete, turbo_confirm: "Remove this guest?" }, class: "px-4 py-2 rounded-lg glass text-sm text-red-400 hover:bg-red-500/10 transition-all" %>
+  </div>
+</div>

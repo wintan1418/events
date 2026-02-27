@@ -1,0 +1,86 @@
+<% content_for(:page_title) { "Account Settings" } %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-white">Account Settings</h1>
+    <%= link_to "Edit", edit_admin_account_path, class: "px-4 py-2 rounded-lg glass text-sm text-gray-300 hover:bg-white/10 transition-all" %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Account Details -->
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Account Information</h3>
+      <dl class="space-y-3">
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Account Name</dt>
+          <dd class="text-sm text-white"><%= @account.name %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Subdomain</dt>
+          <dd class="text-sm text-white"><%= @account.subdomain %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Email</dt>
+          <dd class="text-sm text-white"><%= @account.email || "—" %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Phone</dt>
+          <dd class="text-sm text-white"><%= @account.phone || "—" %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Website</dt>
+          <dd class="text-sm">
+            <% if @account.website.present? %>
+              <%= link_to @account.website, @account.website, target: "_blank", rel: "noopener", class: "text-gold-400 hover:text-gold-300" %>
+            <% else %>
+              <span class="text-white">—</span>
+            <% end %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-400 mb-1">Address</dt>
+          <dd class="text-sm text-white"><%= @account.address.present? ? @account.address : "—" %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Plan & Usage -->
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Plan & Usage</h3>
+      <dl class="space-y-3">
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Plan</dt>
+          <dd class="text-sm">
+            <%= render "components/badge", status: @account.plan_type %>
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Status</dt>
+          <dd class="text-sm">
+            <% if @account.active? %>
+              <span class="text-emerald-400">Active</span>
+            <% else %>
+              <span class="text-red-400">Inactive</span>
+            <% end %>
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Total Users</dt>
+          <dd class="text-sm text-white"><%= @account.users.count %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Total Events</dt>
+          <dd class="text-sm text-white"><%= @account.events.count %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Total Vendors</dt>
+          <dd class="text-sm text-white"><%= @account.vendors.count %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Member Since</dt>
+          <dd class="text-sm text-white"><%= @account.created_at.strftime("%B %d, %Y") %></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>

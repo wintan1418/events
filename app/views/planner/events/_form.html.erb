@@ -1,0 +1,93 @@
+<%= form_with(model: [:planner, event], class: "space-y-6") do |f| %>
+  <% if event.errors.any? %>
+    <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+      <div class="flex items-center gap-2 mb-2">
+        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+        <h3 class="text-sm font-semibold text-red-400"><%= pluralize(event.errors.count, "error") %> prevented saving:</h3>
+      </div>
+      <ul class="text-sm text-red-300/80 list-disc list-inside space-y-0.5">
+        <% event.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Event Details -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 space-y-5">
+    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Event Details</h3>
+
+    <div>
+      <%= f.label :title, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.text_field :title, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm", placeholder: "Give your event a name" %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :event_type, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.select :event_type, Event.event_types.keys.map { |k| [k.humanize, k] }, {}, class: "w-full rounded-xl bg-[#111827] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm" %>
+      </div>
+      <div>
+        <%= f.label :status, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.select :status, Event.statuses.keys.map { |k| [k.humanize, k] }, {}, class: "w-full rounded-xl bg-[#111827] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :description, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.text_area :description, rows: 3, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm", placeholder: "Describe the event..." %>
+    </div>
+  </div>
+
+  <!-- Date & Venue -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 space-y-5">
+    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Date & Venue</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <%= f.label :event_date, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.date_field :event_date, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm" %>
+      </div>
+      <div>
+        <%= f.label :start_time, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.time_field :start_time, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm" %>
+      </div>
+      <div>
+        <%= f.label :end_time, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.time_field :end_time, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :venue, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.text_field :venue, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm", placeholder: "Venue name or address" %>
+    </div>
+  </div>
+
+  <!-- Budget & Guest Info -->
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 space-y-5">
+    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Budget & Guests</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :budget_total, "Total Budget ($)", class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.number_field :budget_total, step: 0.01, min: 0, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm", placeholder: "0.00" %>
+      </div>
+      <div>
+        <%= f.label :estimated_guests, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.number_field :estimated_guests, min: 0, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm", placeholder: "Expected number of guests" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :client_id, "Assign Client", class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.collection_select :client_id, User.clients.active, :id, :full_name, { include_blank: "Select a client (optional)" }, class: "w-full rounded-xl bg-[#111827] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all text-sm" %>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex items-center gap-3">
+    <%= f.submit class: "px-6 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-black font-semibold hover:from-gold-400 hover:to-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:ring-offset-2 focus:ring-offset-surface-950 transition-all cursor-pointer text-sm" %>
+    <%= link_to "Cancel", planner_events_path, class: "px-6 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-gray-300 hover:text-white hover:border-white/[0.12] transition-all text-sm" %>
+  </div>
+<% end %>

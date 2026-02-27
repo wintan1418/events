@@ -1,0 +1,9 @@
+<% content_for(:page_title) { "Edit Account" } %>
+
+<div class="max-w-2xl">
+  <div class="mb-6">
+    <%= link_to "Back", admin_account_path, class: "text-sm text-gray-400 hover:text-white" %>
+  </div>
+  <h1 class="text-2xl font-bold text-white mb-6">Edit Account Settings</h1>
+  <%= render "form" %>
+</div>

@@ -1,0 +1,105 @@
+<% content_for(:page_title) { @event.title } %>
+
+<div class="space-y-8">
+  <div class="flex items-start justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-white"><%= @event.title %></h1>
+      <p class="text-gray-400 mt-1"><%= @event.venue %> &middot; <%= @event.event_date&.strftime("%B %d, %Y") %></p>
+    </div>
+    <div class="flex items-center gap-3">
+      <%= link_to "Back", admin_events_path, class: "text-sm text-gray-400 hover:text-white" %>
+      <%= link_to "Edit", edit_planner_event_path(@event), class: "px-4 py-2 rounded-lg glass text-sm text-gray-300 hover:bg-white/10 transition-all" %>
+      <%= render "components/badge", status: @event.status %>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <%= render "components/stat_card", label: "Days Until", value: @event.days_until || "—",
+        icon_path: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" %>
+    <%= render "components/stat_card", label: "Budget", value: number_to_currency(@event.budget_total),
+        icon_path: "M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "emerald" %>
+    <%= render "components/stat_card", label: "Guests", value: @event.guests.count,
+        icon_path: "M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z", color: "blue" %>
+    <%= render "components/stat_card", label: "Tasks Done", value: "#{@event.tasks_completion_percentage}%",
+        icon_path: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "purple" %>
+  </div>
+
+  <!-- Details -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Event Details</h3>
+      <dl class="space-y-3">
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Type</dt>
+          <dd class="text-sm text-white capitalize"><%= @event.event_type.humanize %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Planner</dt>
+          <dd class="text-sm text-white"><%= @event.planner&.full_name || "Unassigned" %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Client</dt>
+          <dd class="text-sm text-white"><%= @event.client&.full_name || "Unassigned" %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Time</dt>
+          <dd class="text-sm text-white">
+            <%= @event.start_time&.strftime("%l:%M %p")&.strip || "TBD" %> - <%= @event.end_time&.strftime("%l:%M %p")&.strip || "TBD" %>
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-400">Estimated Guests</dt>
+          <dd class="text-sm text-white"><%= @event.estimated_guests %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Budget Overview</h3>
+      <%= render "components/progress_bar", percentage: @event.budget_percentage, label: "Budget Spent" %>
+      <div class="mt-4 grid grid-cols-3 gap-4 text-center">
+        <div>
+          <p class="text-xs text-gray-500">Total</p>
+          <p class="text-sm font-semibold text-white"><%= number_to_currency(@event.budget_total) %></p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500">Spent</p>
+          <p class="text-sm font-semibold text-gold-400"><%= number_to_currency(@event.budget_spent) %></p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500">Remaining</p>
+          <p class="text-sm font-semibold text-emerald-400"><%= number_to_currency(@event.budget_remaining) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Description -->
+  <% if @event.description.present? %>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Description</h3>
+      <p class="text-sm text-gray-400"><%= @event.description %></p>
+    </div>
+  <% end %>
+
+  <!-- Quick Counts -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 text-center py-4">
+      <p class="text-lg font-bold text-white"><%= @event.tasks.count %></p>
+      <p class="text-xs text-gray-400">Tasks</p>
+    </div>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 text-center py-4">
+      <p class="text-lg font-bold text-white"><%= @event.line_items.count %></p>
+      <p class="text-xs text-gray-400">Budget Items</p>
+    </div>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 text-center py-4">
+      <p class="text-lg font-bold text-white"><%= @event.guests.count %></p>
+      <p class="text-xs text-gray-400">Guests</p>
+    </div>
+    <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 text-center py-4">
+      <p class="text-lg font-bold text-white"><%= @event.event_vendors.count %></p>
+      <p class="text-xs text-gray-400">Vendors</p>
+    </div>
+  </div>
+</div>

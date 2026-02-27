@@ -1,0 +1,66 @@
+<% content_for(:page_title) { "Vendor Directory" } %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Vendor Directory</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Browse and manage your vendor network</p>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+    <% if @vendors.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Vendor</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Contact</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Phone</th>
+              <th class="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Website</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @vendors.each do |vendor| %>
+              <tr class="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors group">
+                <td class="px-6 py-4">
+                  <%= link_to planner_vendor_path(vendor), class: "flex items-center gap-3" do %>
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                      <%= vendor.name.first(2).upcase %>
+                    </div>
+                    <span class="font-medium text-white group-hover:text-gold-400 transition-colors"><%= vendor.name %></span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-[11px] font-medium bg-white/[0.04] text-gray-300 capitalize"><%= vendor.category.humanize %></span>
+                </td>
+                <td class="px-6 py-4 text-gray-400 text-xs"><%= vendor.email || "---" %></td>
+                <td class="px-6 py-4 text-gray-400 text-xs"><%= vendor.phone || "---" %></td>
+                <td class="px-6 py-4">
+                  <% if vendor.website.present? %>
+                    <%= link_to vendor.website, target: "_blank", rel: "noopener", class: "text-gold-400 hover:text-gold-300 text-xs transition-colors" do %>
+                      Visit &rarr;
+                    <% end %>
+                  <% else %>
+                    <span class="text-gray-600 text-xs">---</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-16 px-8">
+        <div class="w-14 h-14 rounded-2xl bg-gold-500/10 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"/></svg>
+        </div>
+        <h3 class="text-white font-medium">No vendors yet</h3>
+        <p class="text-gray-500 text-sm mt-1">Your vendor directory is empty.</p>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "components/pagination", pagy: @pagy %>
+</div>

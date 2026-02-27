@@ -1,0 +1,9 @@
+<%# locals: (user:, size: "md") %>
+<%
+  sizes = { "sm" => "w-8 h-8 text-xs", "md" => "w-10 h-10 text-sm", "lg" => "w-14 h-14 text-lg" }
+  size_classes = sizes[size] || sizes["md"]
+  initials = "#{user.first_name&.first}#{user.last_name&.first}".upcase
+%>
+<div class="<%= size_classes %> rounded-full bg-gradient-to-br from-gold-500 to-gold-700 flex items-center justify-center text-white font-semibold flex-shrink-0">
+  <%= initials %>
+</div>

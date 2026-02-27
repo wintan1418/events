@@ -1,0 +1,49 @@
+<%= form_with(model: [:planner, @event, task], class: "space-y-6") do |f| %>
+  <% if task.errors.any? %>
+    <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+      <h3 class="text-sm font-medium text-red-400"><%= pluralize(task.errors.count, "error") %> prevented saving:</h3>
+      <ul class="mt-2 text-sm text-red-300 list-disc list-inside">
+        <% task.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 space-y-5">
+    <div>
+      <%= f.label :title, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.text_field :title, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "Task title" %>
+    </div>
+
+    <div>
+      <%= f.label :description, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.text_area :description, rows: 3, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all", placeholder: "Task description" %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div>
+        <%= f.label :due_date, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.date_field :due_date, class: "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all" %>
+      </div>
+      <div>
+        <%= f.label :status, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.select :status, Task.statuses.keys.map { |k| [k.humanize, k] }, {}, class: "w-full rounded-xl bg-[#111827] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all" %>
+      </div>
+      <div>
+        <%= f.label :priority, class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+        <%= f.select :priority, Task.priorities.keys.map { |k| [k.humanize, k] }, {}, class: "w-full rounded-xl bg-[#111827] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :assigned_to_id, "Assign To", class: "block text-sm font-medium text-gray-300 mb-1.5" %>
+      <%= f.collection_select :assigned_to_id, User.planners.active, :id, :full_name, { include_blank: "Unassigned" }, class: "w-full rounded-xl bg-[#111827] border border-white/[0.08] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/30 transition-all" %>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <%= f.submit class: "px-6 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-black font-semibold hover:from-gold-400 hover:to-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:ring-offset-2 focus:ring-offset-surface-950 transition-all cursor-pointer text-sm" %>
+    <%= link_to "Cancel", planner_event_tasks_path(@event), class: "px-6 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-gray-300 hover:text-white hover:border-white/[0.12] transition-all text-sm" %>
+  </div>
+<% end %>
