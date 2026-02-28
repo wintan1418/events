@@ -18,7 +18,7 @@ gem "pundit", "~> 2.4"
 gem "acts_as_tenant", "~> 1.0"
 
 # Background Jobs & Redis
-gem "sidekiq", "~> 7.3"
+gem "sidekiq", "~> 8.1"
 gem "redis", "~> 5.3"
 
 # Utilities
