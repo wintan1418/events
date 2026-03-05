@@ -39,7 +39,7 @@ group :development, :test do
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
   gem "factory_bot_rails", "~> 6.4"
-  gem "faker", "~> 3.5"
+  gem "faker", "~> 3.6"
   gem "letter_opener", "~> 1.10"
 end
 
