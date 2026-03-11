@@ -24,7 +24,7 @@ gem "redis", "~> 5.3"
 # Utilities
 gem "friendly_id", "~> 5.5"
 gem "image_processing", "~> 1.2"
-gem "pagy", "~> 9.3"
+gem "pagy", "~> 43.3"
 gem "phonelib", "~> 0.9"
 gem "inline_svg", "~> 1.10"
 gem "caxlsx", "~> 4.1"
